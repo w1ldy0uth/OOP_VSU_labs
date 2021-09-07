@@ -1,2 +1,2 @@
 # OOP_VSU_labs
-Source code of ICT labworks in VSU
+Source code of OOP labworks in VSU
