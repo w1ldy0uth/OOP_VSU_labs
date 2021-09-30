@@ -1,12 +1,14 @@
-struct Node {
-    int data;
-    Node *prev;
-    Node *next;
-};
-
-typedef Node* pSet;
+#include <iostream>
 
 class Set {
+    struct Node {
+        int data;
+        Node *prev;
+        Node *next;
+    };
+
+    typedef Node* pSet;
+
     pSet head, tail;
     int size;
 
@@ -19,12 +21,11 @@ public:
     Set(const Set&);
     ~Set();
 
-    [[nodiscard]] int getSize() const;
-    [[nodiscard]] bool isEmpty() const;
-    bool inSet(int);
+    int getSize() const;
+    bool isEmpty() const;
+    bool inSet(int) const;
     int getPosByData(int);
 
-    void print();
     void clear();
 
     void add(int);
@@ -32,14 +33,14 @@ public:
     
     Set& operator=(const Set&);
 
-    Set operator+();
-    Set operator*();
-    Set operator-();
+    friend Set operator+(const Set&, const Set&);
+    friend Set operator*(const Set&, const Set&);
+    friend Set operator-(const Set&, const Set&);
+    friend Set operator/(const Set&, const Set&);
 
-    bool operator==(const Set&);
-    bool operator!=(const Set&);
-    bool operator<=(const Set&);
-    bool operator>=(const Set&);
-    bool operator>(const Set&);
-    bool operator<(const Set&);
+    friend bool operator==(const Set&, const Set&);
+    friend bool operator!=(const Set&, const Set&);
+
+    friend std::ostream& operator<<(std::ostream&, const Set&);
+    friend std::istream& operator>>(std::istream&, Set&);
 };

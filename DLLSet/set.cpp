@@ -15,8 +15,19 @@ Set::Set(const Set& S) {
         tmp = tmp->next;
     }
 }
-Set& Set::operator=(const Set&) {
+Set& Set::operator=(const Set& S) {
+    if(this == &S)
+        return *this;
+    this->~Set();
 
+    pSet temp = S.head;
+
+    while(temp != nullptr) {
+        addToTail(temp->data);
+        temp = temp->next;
+    }
+
+    return *this;
 }
 Set::~Set() {
     clear();
@@ -28,7 +39,7 @@ int Set::getSize() const{
 bool Set::isEmpty() const{
     return size == 0;
 }
-bool Set::inSet(int val) {
+bool Set::inSet(int val) const {
     pSet ptr = head;
     while(ptr != nullptr)
         if(ptr->data == val)
@@ -49,19 +60,6 @@ int Set::getPosByData(int value) {
     return -1;
 }
 
-void Set::print() {
-    if (size != 0) {
-        pSet tmp = head;
-        std::cout << "(";
-        while(tmp->next != nullptr) {
-            std::cout << tmp->data << ", ";
-            tmp = tmp->next;
-        }
-        std::cout << tmp->data << ")\n";
-    }
-    else
-        std::cerr << "WARNING: Set is empty\n";
-}
 void Set::clear() {
     while (size != 0)
         remove(1);
@@ -162,4 +160,113 @@ void Set::remove(int pos) {
 
     delete del;
     size--;
+}
+
+std::ostream& operator<<(std::ostream &out, const Set &S) {
+    out << "(";
+
+    Set::pSet p = S.head;
+    while(p->next != nullptr) {
+        out << p->data << ", ";
+        p = p->next;
+    }
+
+    out << p->data << ")";
+
+    return out;
+}
+std::istream& operator>>(std::istream &in, Set &S) {
+    int value;
+    in >> value;
+    S.add(value);
+    return in;
+}
+
+bool operator==(const Set& C,const Set& W) {
+    if(C.getSize() != W.getSize())
+        return false;
+    else {
+        Set::pSet iterC = C.head;
+        Set::pSet iterW = W.head;
+        while(iterC != nullptr || iterW != nullptr) {
+            if(iterC->data != iterW->data)
+                return false;
+            iterC = iterC->next;
+            iterW = iterW->next;
+        }
+        return true;
+    }
+}
+bool operator!=(const Set& C,const Set& W) {
+    if(C.getSize() != W.getSize())
+        return true;
+    else {
+        Set::pSet iterC = C.head;
+        Set::pSet iterW = W.head;
+        while(iterC != nullptr || iterW != nullptr) {
+            if(iterC->data != iterW->data)
+                return true;
+            iterC = iterC->next;
+            iterW = iterW->next;
+        }
+        return false;
+    }
+}
+
+Set operator+(const Set& a, const Set& b) {
+    Set result;
+    Set::pSet p = a.head;
+    while(p != nullptr) {
+        result.add(p->data);
+        p = p->next;
+    }
+    p = b.head;
+    while(p != nullptr) {
+        result.add(p->data);
+        p=p->next;
+    }
+    return result;
+}
+
+Set operator*(const Set& a, const Set& b) {
+    Set result;
+    Set::pSet p = a.head;
+    while(p != nullptr) {
+        if(b.inSet(p->data))
+            result.add(p->data);
+        p = p->next;
+    }
+    return result;
+}
+
+Set operator-(const Set& a, const Set& b) {
+    Set result;
+    Set::pSet p = a.head;
+    while(p != nullptr) {
+        if(a.inSet(p->data) && !b.inSet(p->data))
+            result.add(p->data);
+        p = p->next;
+    }
+    return result;
+}
+
+Set operator/(const Set& a, const Set& b) {
+    Set result;
+    Set::pSet pA = a.head, pB = b.head;
+    while(pA != nullptr) {
+        result.add(pA->data);
+        pA = pA->next;
+    }
+    while(pB != nullptr) {
+        result.add(pB->data);
+        pB = pB->next;
+    }
+    Set::pSet p = result.head;
+    Set final;
+    while(p != nullptr) {
+        if(!(a.inSet(p->data) && b.inSet(p->data)))
+            final.add(p->data);
+        p = p->next;
+    }
+    return final;
 }
